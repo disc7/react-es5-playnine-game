@@ -151,20 +151,32 @@ var DoneFrame = React.createClass({
 
 var Game = React.createClass({
   getInitialState: function() {
+    var numberOfStars = this.getRandomNumberStars();
+    var previousNumberOfStars = numberOfStars;
     return {
       selectedNumbers: [],
       usedNumbers: [],
-      numberOfStars: this.getNumberStars(),
+      numberOfStars: numberOfStars,
       correct: null,
       numberOfRedrawsRemaining: 5,
-      doneStatus: null
+      doneStatus: null,
+      previousNumberOfStars: previousNumberOfStars
     };
   },
   resetGame: function() {
     this.replaceState(this.getInitialState());
   },
-  getNumberStars: function() {
+  getRandomNumberStars: function() {
     return Math.floor(Math.random()*9) + 1;
+  },
+  getNumberStars: function() {
+    var numberStars = this.getRandomNumberStars();
+    var previousNumberOfStars = this.state.previousNumberOfStars;
+    while (numberStars === previousNumberOfStars) {
+      numberStars = this.getRandomNumberStars();
+    }
+    this.setState({previousNumberOfStars: numberStars});
+    return numberStars;
   },
   selectNumber: function(clickedNumber) {
     var selectedNumbers = this.state.selectedNumbers;
@@ -233,9 +245,6 @@ var Game = React.createClass({
     return possibleCombinationSum(possibleNumbers, numberOfStars);
   },
   updateDoneStatus: function() {
-    console.log(this.state.usedNumbers.length);
-    console.log(this.state.numberOfRedrawsRemaining);
-    console.log(this.possibleSolutions());
     if (this.state.usedNumbers.length === 9) {
       this.setState({ doneStatus: 'You Won!'});
       return;
