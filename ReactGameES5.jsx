@@ -112,14 +112,16 @@ var NumbersFrame = React.createClass({
   render: function() {
     var numbers = [];
     var className;
+    var clickHandler;
     var selectNumber = this.props.selectNumber;
     var usedNumbers = this.props.usedNumbers;
     var selectedNumbers = this.props.selectedNumbers;
     for (var i = 1; i <= 9; i++) {
       className = "number selected-" + (selectedNumbers.indexOf(i) >= 0);
       className += " used-" + (usedNumbers.indexOf(i) >= 0);
+      clickHandler = (usedNumbers.indexOf(i) >= 0) ? null : selectNumber.bind(null, i);
       numbers.push(
-        <div className={className} onClick={selectNumber.bind(null, i)}>
+        <div className={className} onClick={clickHandler}>
           {i}
         </div>
       );
@@ -158,7 +160,7 @@ var Game = React.createClass({
       usedNumbers: [],
       numberOfStars: numberOfStars,
       correct: null,
-      numberOfRedrawsRemaining: 5,
+      numberOfRedrawsRemaining: 9,
       doneStatus: null,
       previousNumberOfStars: previousNumberOfStars
     };
@@ -238,9 +240,6 @@ var Game = React.createClass({
         possibleNumbers.push(i);
       }
     }
-
-    console.log('possibleNumbers: ' + possibleNumbers);
-    console.log('numberOfStars: ' + numberOfStars);
 
     return possibleCombinationSum(possibleNumbers, numberOfStars);
   },
