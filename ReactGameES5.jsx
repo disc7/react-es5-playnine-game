@@ -149,10 +149,27 @@ var NumbersFrame = React.createClass({
 
 var DoneFrame = React.createClass({
   render: function() {
+    var numbers = [],
+          numbersRemaining = [],
+          numbersRemainingMessage = '',
+          usedNumbers = this.props.usedNumbers;
+    for (var i = 1; i < 10; i++) {
+      if (usedNumbers.indexOf(i) === -1) {
+        numbers.push(
+          <div className="number selected-false">
+            {i}
+          </div> );
+      }
+    }
+
+    if (this.props.doneStatus === 0) {
+      numbersRemainingMessage = <p>You were left with the following numbers: {numbers}</p>;
+    }
+
     return (
-      <div className="well text-center">
+      <div id="done-frame" className="well text-center">
         <h2>{this.props.doneStatusTitle}</h2>
-        <p>{this.props.doneStatusMessage}</p>
+        {numbersRemainingMessage}
         <button
           className="btn btn-default"
           onClick={this.props.resetGame}>
@@ -259,8 +276,7 @@ var Game = React.createClass({
     if (this.state.usedNumbers.length === 9) {
       this.setState({
           doneStatus: 1,
-          doneStatusTitle: 'You Won!',
-          doneStatusMessage: ''
+          doneStatusTitle: 'You Won!'
       });
       return;
     }
@@ -269,8 +285,7 @@ var Game = React.createClass({
         !this.possibleSolutions()) {
       this.setState({
           doneStatus: 0,
-          doneStatusTitle: 'Game Over!',
-          doneStatusMessage: 'No more number combinations available.'
+          doneStatusTitle: 'Game Over!'
       });
     }
   },
@@ -281,27 +296,21 @@ var Game = React.createClass({
         correct = this.state.correct,
         doneStatus = this.state.doneStatus,
         doneStatusTitle = this.state.doneStatusTitle,
-        doneStatusMessage = this.state.doneStatusMessage,
         numberOfRedrawsRemaining = this.state.numberOfRedrawsRemaining,
         bottomFrame;
 
     // Game over (not complete)
     if (doneStatus === 0) {
       numberOfStars = this.state.previousNumberOfStars;
-      bottomFrame = <div>
-                      <NumbersFrame
-                        selectedNumbers={selectedNumbers}
+      bottomFrame = <DoneFrame
+                        doneStatus={doneStatus}
                         usedNumbers={usedNumbers}
-                        selectNumber={this.selectNumber} />
-                      <DoneFrame
                         doneStatusTitle={doneStatusTitle}
-                        doneStatusMessage={doneStatusMessage}
-                        resetGame={this.resetGame} />
-                    </div>;
+                        resetGame={this.resetGame} />;
     } else if (doneStatus === 1) {
       bottomFrame = <DoneFrame
+                        usedNumbers={usedNumbers}
                         doneStatusTitle={doneStatusTitle}
-                        doneStatusMessage={doneStatusMessage}
                         resetGame={this.resetGame} />
     } else {
       bottomFrame = <NumbersFrame

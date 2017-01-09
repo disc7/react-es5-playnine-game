@@ -23,7 +23,7 @@
   height: 200px;
 }
 
-#numbers-frame .number, #answer-frame .well span {
+#numbers-frame .number, #answer-frame .well span, #done-frame .number {
   display: inline-block;
   margin: 0.5em;
   background-color: #bbb;
