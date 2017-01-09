@@ -125,12 +125,26 @@ var NumbersFrame = React.createClass({
         className,
         clickHandler,
         selectNumber = this.props.selectNumber,
+        unselectNumber = this.props.unselectNumber,
         usedNumbers = this.props.usedNumbers,
         selectedNumbers = this.props.selectedNumbers;
+
     for (var i = 1; i <= 9; i++) {
       className = "number selected-" + (selectedNumbers.indexOf(i) >= 0);
       className += " used-" + (usedNumbers.indexOf(i) >= 0);
-      clickHandler = (usedNumbers.indexOf(i) >= 0) ? null : selectNumber.bind(null, i);
+
+      // If number has been used disable clickHandler
+      if (usedNumbers.indexOf(i) >= 0) {
+        clickHandler = null;
+      } else {
+        // If number has not been used toggle selectability
+        if (selectedNumbers.indexOf(i) >= 0) {
+          clickHandler = unselectNumber.bind(null, i);
+        } else {
+          clickHandler = selectNumber.bind(null, i);
+        }
+      }
+
       numbers.push(
         <div className={className} onClick={clickHandler}>
           {i}
@@ -150,6 +164,7 @@ var NumbersFrame = React.createClass({
 var DoneFrame = React.createClass({
   render: function() {
     var numbers = [],
+          numberOrNumbers = '',
           numbersRemaining = [],
           numbersRemainingMessage = '',
           usedNumbers = this.props.usedNumbers;
@@ -162,8 +177,12 @@ var DoneFrame = React.createClass({
       }
     }
 
+    if (numbers.length > 1) {
+      numberOrNumbers = 's';
+    }
+
     if (this.props.doneStatus === 0) {
-      numbersRemainingMessage = <p>You were left with the following numbers: {numbers}</p>;
+      numbersRemainingMessage = <p>You were left with the following number{numberOrNumbers}: {numbers}</p>;
     }
 
     return (
@@ -316,6 +335,7 @@ var Game = React.createClass({
       bottomFrame = <NumbersFrame
                       selectedNumbers={selectedNumbers}
                       usedNumbers={usedNumbers}
+                      unselectNumber={this.unselectNumber}
                       selectNumber={this.selectNumber} />;
     }
 
@@ -341,7 +361,6 @@ var Game = React.createClass({
             unselectNumber={this.unselectNumber}
           />
         </div>
-
         {bottomFrame}
       </div>
     );
