@@ -34,7 +34,7 @@
   cursor: pointer;
 }
 
-/* overriding cursor */
+/* overriding properties above for done-frame .number */
 #done-frame .number {
   margin-bottom: 0.2em;
   margin-top: 0.2em;
