@@ -50,8 +50,9 @@ var StarsFrame = React.createClass({
 
 var ButtonFrame = React.createClass({
   render: function() {
-    var disabled,
+    var checkAnsweredDisabled,
         button,
+        refreshDisabled = (this.props.numberOfRedrawsRemaining === 0 || (this.props.doneStatus === 0 || this.props.doneStatus === 1)),
         correct = this.props.correct;
     switch(correct) {
       case true:
@@ -70,11 +71,11 @@ var ButtonFrame = React.createClass({
         );
         break;
       default:
-        disabled = (this.props.selectedNumbers.length === 0);
+        checkAnsweredDisabled = (this.props.selectedNumbers.length === 0);
         button = (
           <button
             className="btn btn-primary btn-lg"
-            disabled={disabled}
+            disabled={checkAnsweredDisabled}
             onClick={this.props.checkAnswer}>
             =
           </button>
@@ -88,7 +89,7 @@ var ButtonFrame = React.createClass({
         <button
           className="btn btn-warning btn-xs"
           onClick={this.props.redraw}
-          disabled={this.props.numberOfRedrawsRemaining === 0}>
+          disabled={refreshDisabled}>
           <span className="glyphicon glyphicon-refresh"></span>
           &nbsp;
           {this.props.numberOfRedrawsRemaining}
@@ -355,6 +356,7 @@ var Game = React.createClass({
             acceptAnswer={this.acceptAnswer}
             redraw={this.redraw}
             numberOfRedrawsRemaining={numberOfRedrawsRemaining}
+            doneStatus={doneStatus}
           />
           <AnswerFrame
             selectedNumbers={selectedNumbers}
