@@ -6,3 +6,4 @@ TODO
 - Use case for adding Redux store support?
 - Add username game names, game timer and refeshes used to establish high score table
 - Improve UI
+- Add how to play tutorial
