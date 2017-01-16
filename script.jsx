@@ -17,15 +17,19 @@ var possibleCombinationSum = function(arr, n) {
   return false;
 };
 
+var NUMBER_OF_STARS = 9;
+var NUMBER_REDRAWS_REMAINING = 9;
+var STATUS_GAME_COMPLETED = 1;
+var STATUS_GAME_INCOMPLETED = 0;
+
 var StarsFrame = React.createClass({
   render: function() {
     var className,
           numberOfStars,
           stars = [];
 
-    // Check if game has been won
-    if (this.props.doneStatus === 1) {
-      numberOfStars = 9;
+    if (this.props.doneStatus === STATUS_GAME_COMPLETED) {
+      numberOfStars = NUMBER_OF_STARS;
       className = "glyphicon glyphicon-star normal-right-spinner";
     } else {
       numberOfStars = this.props.numberOfStars;
@@ -52,7 +56,9 @@ var ButtonFrame = React.createClass({
   render: function() {
     var checkAnsweredDisabled,
         button,
-        refreshDisabled = (this.props.numberOfRedrawsRemaining === 0 || (this.props.doneStatus === 0 || this.props.doneStatus === 1)),
+        refreshDisabled = (this.props.numberOfRedrawsRemaining === 0 ||
+                                     (this.props.doneStatus === STATUS_GAME_INCOMPLETED ||
+                                      this.props.doneStatus === STATUS_GAME_COMPLETED)),
         correct = this.props.correct;
     switch(correct) {
       case true:
@@ -130,7 +136,7 @@ var NumbersFrame = React.createClass({
         usedNumbers = this.props.usedNumbers,
         selectedNumbers = this.props.selectedNumbers;
 
-    for (var i = 1; i <= 9; i++) {
+    for (var i = 1; i <= NUMBER_OF_STARS; i++) {
       className = "number selected-" + (selectedNumbers.indexOf(i) >= 0);
       className += " used-" + (usedNumbers.indexOf(i) >= 0);
 
@@ -169,7 +175,7 @@ var DoneFrame = React.createClass({
           numbersRemaining = [],
           numbersRemainingMessage = '',
           usedNumbers = this.props.usedNumbers;
-    for (var i = 1; i < 10; i++) {
+    for (var i = 1; i < NUMBER_OF_STARS +1; i++) {
       if (usedNumbers.indexOf(i) === -1) {
         numbers.push(
           <div className="number selected-false">
@@ -182,7 +188,7 @@ var DoneFrame = React.createClass({
       numberOrNumbers = 's';
     }
 
-    if (this.props.doneStatus === 0) {
+    if (this.props.doneStatus === STATUS_GAME_INCOMPLETED) {
       numbersRemainingMessage = <p>You were left with the following number{numberOrNumbers}: {numbers}</p>;
     }
 
@@ -209,7 +215,7 @@ var Game = React.createClass({
       usedNumbers: [],
       numberOfStars: numberOfStars,
       correct: null,
-      numberOfRedrawsRemaining: 9,
+      numberOfRedrawsRemaining: NUMBER_REDRAWS_REMAINING,
       doneStatus: null,
       previousNumberOfStars: previousNumberOfStars
     };
@@ -218,7 +224,7 @@ var Game = React.createClass({
     this.replaceState(this.getInitialState());
   },
   getRandomNumberStars: function() {
-    return Math.floor(Math.random()*9) + 1;
+    return Math.floor(Math.random()*NUMBER_OF_STARS) + 1;
   },
   getNumberStars: function() {
     var numberStars = this.getRandomNumberStars(),
@@ -284,7 +290,7 @@ var Game = React.createClass({
         possibleNumbers = [],
         usedNumbers = this.state.usedNumbers;
 
-    for (var i = 1; i < 9; i++) {
+    for (var i = 1; i < NUMBER_OF_STARS; i++) {
       if (usedNumbers.indexOf(i) < 0) {
         possibleNumbers.push(i);
       }
@@ -293,7 +299,7 @@ var Game = React.createClass({
     return possibleCombinationSum(possibleNumbers, numberOfStars);
   },
   updateDoneStatus: function() {
-    if (this.state.usedNumbers.length === 9) {
+    if (this.state.usedNumbers.length === NUMBER_OF_STARS) {
       this.setState({
           doneStatus: 1,
           doneStatusTitle: 'You Won!'
@@ -319,15 +325,14 @@ var Game = React.createClass({
         numberOfRedrawsRemaining = this.state.numberOfRedrawsRemaining,
         bottomFrame;
 
-    // Game over (not complete)
-    if (doneStatus === 0) {
+    if (doneStatus === STATUS_GAME_INCOMPLETED) {
       numberOfStars = this.state.previousNumberOfStars;
       bottomFrame = <DoneFrame
                         doneStatus={doneStatus}
                         usedNumbers={usedNumbers}
                         doneStatusTitle={doneStatusTitle}
                         resetGame={this.resetGame} />;
-    } else if (doneStatus === 1) {
+    } else if (doneStatus === STATUS_GAME_COMPLETED) {
       bottomFrame = <DoneFrame
                         usedNumbers={usedNumbers}
                         doneStatusTitle={doneStatusTitle}
