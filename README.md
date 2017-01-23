@@ -7,3 +7,4 @@ TODO
 - Add username game names, game timer and refeshes used to establish high score table
 - Improve UI
 - Add how to play tutorial
+- Setup webpack-dev-server to run offline (node packages needed locally)
